@@ -19,9 +19,6 @@
         . Compatibility Options: "Do not write color space information" not selected
         . There are no Advanced Options available with these settings
 
-
-    
-
 '''
 
 import sys
@@ -71,10 +68,10 @@ upto = 2
 data = struct.pack("BBBB", contents[upto], contents[upto+1], contents[upto+2], contents[upto+3])
 fileSize = struct.unpack("I", bytearray(data))
 
-upto += 4
-# four bytes are reserved
+upto += 8
+# eight bytes are reserved
 
-upto += 4
+upto += 8
 
 debugOut("Size of file: {}".format(fileSize[0]))
 
@@ -83,71 +80,71 @@ data = struct.pack("BBBB", contents[upto], contents[upto+1], contents[upto+2], c
 offset = struct.unpack("I", bytearray(data))
 
 debugOut("Offset: {}".format(offset[0]))
-upto += 4
+upto += 8
 
 data = struct.pack("BBBB", contents[upto], contents[upto+1], contents[upto+2], contents[upto+3])
 headersize = struct.unpack("I", bytearray(data))
 headerLength = headersize[0]
 startOfDefinitions = headerLength + upto
 debugOut("header size: {}, up to {}, startOfDefinitions {}".format(headersize[0], upto, startOfDefinitions))
-upto += 4
+upto += 8
 
 data = struct.pack("BBBB", contents[upto], contents[upto+1], contents[upto+2], contents[upto+3])
 t = struct.unpack("I", bytearray(data))
 debugOut("width: {}".format(t[0]))
 width = t[0]
 
-upto += 4
+upto += 8
 data = struct.pack("BBBB", contents[upto], contents[upto+1], contents[upto+2], contents[upto+3])
 t = struct.unpack("I", bytearray(data))
 debugOut("height: {}".format(t[0]))
 height = t[0]
 
 # 26
-upto += 4
+upto += 8
 
 data = struct.pack("BB", contents[upto], contents[upto+1])
 t = struct.unpack("H", bytearray(data))
 debugOut("planes: {}".format(t[0]))
 
-upto = upto + 2
+upto = upto + 4
 data = struct.pack("BB", contents[upto], contents[upto+1])
 t = struct.unpack("H", bytearray(data))
 debugOut("bits per pixel: {}".format(t[0]))
 bitsPerPixel = t[0]
 
-upto = upto + 2
+upto = upto + 4
 data = struct.pack("BBBB", contents[upto], contents[upto+1], contents[upto+2], contents[upto+3])
 t = struct.unpack("I", bytearray(data))
 debugOut("biCompression: {}".format(t[0]))
 
-upto = upto + 4
+upto = upto + 8
 data = struct.pack("BBBB", contents[upto], contents[upto+1], contents[upto+2], contents[upto+3])
 t = struct.unpack("I", bytearray(data))
 debugOut("biSizeImage: {}".format(t[0]))
 
-upto = upto + 4
+upto = upto + 8
 data = struct.pack("BBBB", contents[upto], contents[upto+1], contents[upto+2], contents[upto+3])
 t = struct.unpack("I", bytearray(data))
 debugOut("biXPelsPerMeter: {}".format(t[0]))
 
-upto = upto + 4
+upto = upto + 8
 data = struct.pack("BBBB", contents[upto], contents[upto+1], contents[upto+2], contents[upto+3])
 t = struct.unpack("I", bytearray(data))
 debugOut("biYPelsPerMeter: {}".format(t[0]))
 
-upto = upto + 4
+upto = upto + 8
 data = struct.pack("BBBB", contents[upto], contents[upto+1], contents[upto+2], contents[upto+3])
 t = struct.unpack("I", bytearray(data))
 debugOut("biClrUsed: {}".format(t[0]))
 colorsUsed = t
 
-upto = upto + 4
+upto = upto + 8
 data = struct.pack("BBBB", contents[upto], contents[upto+1], contents[upto+2], contents[upto+3])
 t = struct.unpack("I", bytearray(data))
 debugOut("biClrImportant: {}".format(t[0]))
 
-upto += 4
+upto += 8
 
 debugOut("Upto: {} Number of colors used: {} definitions start at: {}".format(upto, colorsUsed[0],  startOfDefinitions))
 
@@ -159,10 +156,10 @@ for i in range(colorsUsed[0]):
 #Assign the colors to the array.  upto = 54
 # startOfDefinitions = upto
 for i in range(colorsUsed[0]):
-    upto =  startOfDefinitions + (i * 4)
+    upto =  startOfDefinitions + (i * 8)
     blue = contents[upto]
-    green = contents[upto + 1]
-    red = contents[upto + 2]
+    green = contents[upto + 2]
+    red = contents[upto + 4]
     # ignore the alpha channel.
 
     # data = struct.pack("BBBB", contents[upto], contents[upto+1], contents[upto+2], contents[upto+3])
@@ -249,3 +246,5 @@ debugOut("Copy and paste this array into a image.h or other header file")
 
 if not debug:
     print("Completed; the output is in {}".format(output))
+    
+
